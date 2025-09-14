@@ -52,3 +52,12 @@ python -m pyflowchart test.py -o test.html
   source tp1-env/bin/activate # Ativar ambiente virtual 
   pip install -r requirements.txt # Instalar dependencias
   python server.py -port 5001 # Executar o servidor
+
+
+# TP1 Instruções
+
+Clique em uma célula vazia para adicionar uma parede.
+Clique em uma célula ocupada para removê-la.
+Segure a tecla "s" e clique em uma célula para definir o estado inicial.
+Segure a tecla "g" e clique em uma célula para definir o estado final.
+Segure a tecla "c" e clique em uma célula para definir o custo.

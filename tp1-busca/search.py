@@ -167,6 +167,7 @@ def bfs(s, g, level, adj):
 
     ################################
     # 2.1 INSIRA SEU CÓDIGO AQUI
+    
     ################################
 
     return [], visited
