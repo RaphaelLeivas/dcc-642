@@ -164,9 +164,16 @@ def transition_model(level, state1):
     level_length = 0
     level_height = 0
 
-    last_space = list(spaces.keys())[-1]
-    level_length = last_space[0]
-    level_height = last_space[1]
+    # pdb.set_trace()
+
+    largest_space = max(spaces.keys())
+    largest_wall = (0, 0)
+
+    if len(walls) > 0:
+        largest_wall = max(walls)
+
+    level_length = max(largest_space[0], largest_wall[0])
+    level_height = max(largest_space[1], largest_wall[1])
 
     current_position = state1
 
