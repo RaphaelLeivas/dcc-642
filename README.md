@@ -61,3 +61,10 @@ Clique em uma célula ocupada para removê-la.
 Segure a tecla "s" e clique em uma célula para definir o estado inicial.
 Segure a tecla "g" e clique em uma célula para definir o estado final.
 Segure a tecla "c" e clique em uma célula para definir o custo.
+
+# Python Debugging
+
+import pdb; 
+pdb.set_trace()
+
+vai abrir um terminal exatamente igual o GDB em C.

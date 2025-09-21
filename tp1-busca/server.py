@@ -58,6 +58,8 @@ def start_search():
         print("Path length:", len(path))
         print("Path cost:", path_cost)
 
+        print(visited)
+
         # convert visited to a list
         visited = list(visited)
 

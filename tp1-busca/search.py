@@ -1,5 +1,7 @@
 import heapq
 from math import sqrt
+import pdb
+from collections import deque
 
 WALL = 'X'
 START_STATE = 'S'
@@ -20,6 +22,13 @@ def plan(map, algorithm='bfs', heuristic=None):
 
     # Load the level from the file
     level = parse_level(map)
+
+    # level: dict with keys 'walls', 'spaces', 'start', 'goal'
+    # walls: set of (x,y) tuples: {(4, 0), (8, 0), ...}
+    # spaces: dict of (x,y) tuples to cost: {(1, 1): 2, ...}
+    # ----- this is for every (x, y) coordinate in the map 
+    # start: (x,y) tuple
+    # goal: (x,y) tuple  
 
     # Retrieve the source and destination coordinates from the level.
     start = level['start']
@@ -138,10 +147,52 @@ def transition_model(level, state1):
              ((1,1), 1.4142135623730951),
              ... ]
     """
-    adj_states = {}
+    adj_states = {} # dict
 
     ################################
     # 1.2 INSIRA SEU CÓDIGO AQUI
+    
+    # nas coordenadas atuais, verifique as 8 direções possíveis
+    # se for parede ou borda do mapa, nao pode ir
+    walls = level['walls']
+    spaces = level['spaces']
+
+    level_length = 0
+    level_height = 0
+
+    last_space = list(spaces.keys())[-1]
+    level_length = last_space[0]
+    level_height = last_space[1]
+
+    current_position = state1
+
+    directions = [
+        (-1, 0),  # up
+        (1, 0),   # down
+        (0, -1),  # left
+        (0, 1),   # right
+        (-1, -1), # up-left
+        (-1, 1),  # up-right
+        (1, -1),  # down-left
+        (1, 1)    # down-right
+    ]
+
+    for dir in directions:
+        new_x = current_position[0] + dir[0]
+        new_y = current_position[1] + dir[1]
+        new_position = (new_x, new_y)
+
+        if new_position in walls:
+            continue
+        if new_x < 0 or new_x > level_length or new_y < 0 or new_y > level_height:
+            continue
+        if new_position in spaces:
+            # essa posicao é valida
+            # ve o custo dela agora para a posicao original
+            # o custo de ir para essa posicao está salvo na spaces
+            cost_new_position = spaces[new_position]
+            adj_states[new_position] = cost_new_position
+            
     ################################
 
     return adj_states.items()
@@ -167,10 +218,31 @@ def bfs(s, g, level, adj):
 
     ################################
     # 2.1 INSIRA SEU CÓDIGO AQUI
-    
+    queue = deque([s])
+
+    while queue:
+        current_node = queue.popleft()
+
+        if current_node == g:
+            return [], visited
+        
+        if current_node in visited and current_node != s:
+            continue
+
+        adjacent_nodes = adj(level, current_node)
+
+        # pdb.set_trace()
+
+        for adjacent in adjacent_nodes:
+            next_node, cost = adjacent # TODO: ADD COST ANALYSIS
+
+            if next_node not in visited:
+                queue.append(next_node)
+                visited[current_node] = current_node # TODO: corrigir isso
+     
     ################################
 
-    return [], visited
+    return [], visited # nao encontrei um caminho
 
 def dfs(s, g, level, adj):
     """ Searches for a path from the source to the goal using the Depth-First Search algorithm.
@@ -289,6 +361,7 @@ def h_manhattan(s, g):
 
     ################################
     # 3.1 INSIRA SEU CÓDIGO AQUI
+    manhattan_distance = abs(s[0] - g[0]) + abs(s[1] - g[1])
     ################################
 
-    return 0
+    return manhattan_distance
