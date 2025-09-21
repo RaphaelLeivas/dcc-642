@@ -55,6 +55,7 @@ def plan(map, algorithm='bfs', heuristic=None):
         elif heuristic == 'manhattan':
             path, visited = a_star(start, goal, level, transition_model, h_manhattan)
 
+    # pdb.set_trace()
     return path, path_cost(path, level), visited
 
 def parse_level(map):
@@ -124,11 +125,14 @@ def cost_function(level, state1, state2, cost1, cost2):
         The cost of the edge joining state1 and state2.
     """
 
+    cost = 0
+
     ################################
     # 1.1 INSIRA SEU CÓDIGO AQUI
+    cost = cost2
     ################################
 
-    return 0
+    return cost
 
 def transition_model(level, state1):
     """ Provides a list of adjacent states and their respective costs from the given state.
@@ -218,27 +222,24 @@ def bfs(s, g, level, adj):
 
     ################################
     # 2.1 INSIRA SEU CÓDIGO AQUI
-    queue = deque([s])
+    queue = deque([(s, [s])])
+    # pdb.set_trace()
 
     while queue:
-        current_node = queue.popleft()
+        current_node, path = queue.popleft()
 
         if current_node == g:
-            return [], visited
+            return path, visited
         
-        if current_node in visited and current_node != s:
-            continue
-
         adjacent_nodes = adj(level, current_node)
 
-        # pdb.set_trace()
 
         for adjacent in adjacent_nodes:
             next_node, cost = adjacent # TODO: ADD COST ANALYSIS
 
             if next_node not in visited:
-                queue.append(next_node)
-                visited[current_node] = current_node # TODO: corrigir isso
+                queue.append((next_node, path + [next_node]))
+                visited[next_node] = current_node
      
     ################################
 
