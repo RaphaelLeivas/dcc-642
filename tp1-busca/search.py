@@ -242,7 +242,7 @@ def bfs(s, g, level, adj):
 
 
         for adjacent in adjacent_nodes:
-            next_node, cost = adjacent # TODO: ADD COST ANALYSIS
+            next_node, cost = adjacent
 
             if next_node not in visited:
                 queue.append((next_node, path + [next_node]))
@@ -266,10 +266,28 @@ def dfs(s, g, level, adj):
     visited = {s: None}
 
     ################################
-    # 2.2 INSIRA SEU CÓDIGO AQUI
+    # 2.1 INSIRA SEU CÓDIGO AQUI
+    lifo = [(s, [s])] # pilha (LIFO)
+    # pdb.set_trace()
+
+    while lifo:
+        current_node, path = lifo.pop()
+
+        if current_node == g:
+            return path, visited
+        
+        adjacent_nodes = adj(level, current_node)
+
+        for adjacent in adjacent_nodes:
+            next_node, cost = adjacent
+
+            if next_node not in visited:
+                lifo.append((next_node, path + [next_node]))
+                visited[next_node] = current_node
+     
     ################################
 
-    return [], visited
+    return [], visited # nao encontrei um caminho
 
 def ucs(s, g, level, adj):
     """ Searches for a path from the source to the goal using the Uniform-Cost Search algorithm.
