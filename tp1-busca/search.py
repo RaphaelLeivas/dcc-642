@@ -226,28 +226,26 @@ def bfs(s, g, level, adj):
         A list of tuples containing cells from the source to the goal, and a dictionary 
         containing the visited cells and their respective parent cells.
     """
-    visited = {s: None}
 
     ################################
-    # 2.1 INSIRA SEU CÓDIGO AQUI
-    queue = deque([(s, [s])])
-    # pdb.set_trace()
+    visited = {s: None}
+    costs = {s: 0}
+    frontier = deque([(s, [s])])
 
-    while queue:
-        current_node, path = queue.popleft()
+    while frontier:
+        current_node, path = frontier.popleft()
 
         if current_node == g:
             return path, visited
         
-        adjacent_nodes = adj(level, current_node)
+        for adjacent in adj(level, current_node):
+            next_node, cost_to_next = adjacent
+            next_cost = costs[current_node] + cost_to_next
 
-
-        for adjacent in adjacent_nodes:
-            next_node, cost = adjacent
-
-            if next_node not in visited:
-                queue.append((next_node, path + [next_node]))
+            if next_node not in visited or next_cost < costs[next_node]:
+                frontier.append((next_node, path + [next_node]))
                 visited[next_node] = current_node
+                costs[next_node] = next_cost
      
     ################################
 
@@ -264,27 +262,25 @@ def dfs(s, g, level, adj):
     Returns:
         A list of tuples containing cells from the source to the goal, and a dictionary containing the visited cells and their respective parent cells.
     """
-    visited = {s: None}
-
     ################################
-    # 2.1 INSIRA SEU CÓDIGO AQUI
-    lifo = [(s, [s])] # pilha (LIFO)
-    # pdb.set_trace()
+    visited = {s: None}
+    costs = {s: 0}
+    frontier = [(s, [s])] # pilha LIFO 
 
-    while lifo:
-        current_node, path = lifo.pop()
+    while frontier:
+        current_node, path = frontier.pop()
 
         if current_node == g:
             return path, visited
         
-        adjacent_nodes = adj(level, current_node)
+        for adjacent in adj(level, current_node):
+            next_node, cost_to_next = adjacent
+            next_cost = costs[current_node] + cost_to_next
 
-        for adjacent in adjacent_nodes:
-            next_node, cost = adjacent
-
-            if next_node not in visited:
-                lifo.append((next_node, path + [next_node]))
+            if next_node not in visited or next_cost < costs[next_node]:
+                frontier.append((next_node, path + [next_node]))
                 visited[next_node] = current_node
+                costs[next_node] = next_cost
      
     ################################
 
@@ -302,14 +298,51 @@ def ucs(s, g, level, adj):
     Returns:
         A list of tuples containing cells from the source to the goal, and a dictionary containing the visited cells and their respective parent cells.
     """
-    visited = {s: None}
-
     ################################
-    # 2.3 INSIRA SEU CÓDIGO AQUI
     
+    visited = {s: None}
+    dist = {}
 
-    return [], visited # nao encontrei um caminho
+    # inicializa distancias com distancia infinita, start com zero
+    for space in level['spaces'].keys():
+        dist[space] = float('inf')
+    dist[s] = 0
 
+    frontier = [(dist[s], s)] # fila de prioridades
+
+    while frontier:
+        current_dist, current_node = heapq.heappop(frontier)
+        if current_node == g:
+            break
+        if current_dist > dist[current_node]:
+            continue
+
+        for adjacent in adj(level, current_node):
+            next_node, cost_to_next = adjacent
+            next_cost = dist[current_node] + cost_to_next
+
+            new_dist = current_dist + next_cost
+
+            if new_dist < dist[next_node]:
+                dist[next_node] = new_dist
+                visited[next_node] = current_node
+                heapq.heappush(frontier, (dist[next_node], next_node))
+
+    # pdb.set_trace()
+    # Reconstruct path
+    if dist[g] == float("inf"):
+        return [], visited  # nao encontrei um caminho
+    # pdb.set_trace()
+    path = []
+    node = g
+    while node is not None:
+        path.append(node)
+        node = visited[node]
+    path.reverse()
+
+    return path, visited
+        
+    ################################
 
 # ======================================
 # Informed (Heuristic) Search Algorithms
@@ -372,9 +405,10 @@ def h_euclidian(s, g):
 
     ################################
     # 3.1 INSIRA SEU CÓDIGO AQUI
+    euclidean_distance = sqrt((s[0] - g[0])**2 + (s[1] - g[1])**2)
     ################################
 
-    return 0
+    return euclidean_distance
 
 def h_manhattan(s, g):
     """ Estimates the cost from the current cell to the goal using the Manhattan distance.

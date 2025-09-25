@@ -51,7 +51,7 @@ python -m pyflowchart test.py -o test.html
  python -m venv tp1-env # Criar ambiente virtual python
   source tp1-env/bin/activate # Ativar ambiente virtual 
   pip install -r requirements.txt # Instalar dependencias
-  python server.py -port 5001 # Executar o servidor
+  c # Executar o servidor
 
 
 # TP1 Instruções
