@@ -7,6 +7,9 @@ WALL = 'X'
 START_STATE = 'S'
 GOAL_STATE  = 'G'
 
+def dist(x, y):
+    return sqrt((x[0] - y[0])**2 + (x[1] - y[1])**2)
+
 def plan(map, algorithm='bfs', heuristic=None):
     """ Loads a level, searches for a path between the given waypoints, and displays the result.
 
@@ -129,7 +132,7 @@ def cost_function(level, state1, state2, cost1, cost2):
 
     ################################
     # 1.1 INSIRA SEU CÓDIGO AQUI
-    cost = cost2
+    cost = dist(state1, state2) * (cost1 + cost2)/2
     ################################
 
     return cost
@@ -199,10 +202,8 @@ def transition_model(level, state1):
             continue
         if new_position in spaces:
             # essa posicao é valida
-            # ve o custo dela agora para a posicao original
-            # o custo de ir para essa posicao está salvo na spaces
-            cost_new_position = spaces[new_position]
-            adj_states[new_position] = cost_new_position
+            # ve o custo dela agora para a posicao corrente
+            adj_states[new_position] = cost_function(level, current_position, new_position, spaces[current_position], spaces[new_position])
             
     ################################
 
@@ -305,9 +306,10 @@ def ucs(s, g, level, adj):
 
     ################################
     # 2.3 INSIRA SEU CÓDIGO AQUI
-    ################################
+    
 
-    return [], visited
+    return [], visited # nao encontrei um caminho
+
 
 # ======================================
 # Informed (Heuristic) Search Algorithms
