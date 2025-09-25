@@ -18,6 +18,7 @@ def dijkstra(graph, start):
     dist[start] = 0
 
     # Priority queue: (distance, node)
+    # a heap sempre olha o valor no primeiro item da tupla e colocar o menor na posição 0
     pq = [(0, start)]
     while pq:
         current_dist, u = heapq.heappop(pq)
