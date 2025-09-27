@@ -105,13 +105,26 @@ DCC642 - Introdução à Inteligência Artificial (2025/2) \\
 
 \section{Introdução}
 
-O presente trabalho busca documentar
+Neste trabalho, algoritmos de busca são implementados em Python para encontrar o caminho 
+de menor custo em um mapa com estrutura de grade. Os algoritmos são comparados em diferentes mapas 
+para verificar experimentalmente as diferenças entre eles.
 
 \section{Objetivos}
 
+Os objetivos principais do trabalho são: 
+
+\begin{itemize}
+	\item Implementar em Python os algoritmos de busca em largura (BFS),
+	busca em profundidade (DFS), busca de custo uniforme (UCS), busca gulosa 
+	por melhor escolha (Greedy) e busca A*, com heurísticas euclidiana e de Manhattan;
+	\item Comparar os algoritmos em 7 casos de teste com diferentes mapas, comparando 
+	não só os caminhos retornados, mas também o número de nós expandidos e o custo do 
+	caminho final.
+\end{itemize}
+
 \section{Casos de Teste}
 
-Nessa seção são abordados 7 casos de teste para evidenciar as principais 
+Nesta seção são abordados 7 casos de teste para evidenciar as principais 
 diferenças entre os algoritmos estudados.
 
 
@@ -139,7 +152,7 @@ com custo total 8, que é a solução ótima para o problema.
 
 \subsection{BFS é equivalente à UCS}
 
-BFS e UCS são equivalentes quando todos os custos são iguais, como mostra 
+BFS e UCS são equivalentes quando todos os custos são iguais \cite{russell2020aima}, como mostra 
 a Figura \ref{fig:BFS_UCS_equiv} (a). Todas as arestas do mapa possuem
  custo unitário, de modo que a solução encontrada pelo BFS na Figura \ref{fig:BFS_UCS_equiv} (b) 
  é igual à solução do UCS na Figura \ref{fig:BFS_UCS_equiv} (c). Além disso, note que 
@@ -175,18 +188,84 @@ profundidade.
 Note que esse caso é bastante específico e não é possível garantir que o DFS
 sempre retorne a solução ótima. 
 
-\subsection{Greedy é ótimo}
+\subsection{Greedy é ótimo}\label{sec:greedy_otimo}
 
-A busca gulosa pela melhor escolha (Greedy) é ótima se 
+A busca gulosa pela melhor escolha (Greedy) é ótima se todos os custos 
+forem iguais. A Figura \ref{fig:greedy_otimo} (a) mostra um mapa em que
+todos os custos são unitários, de modo que o Greedy retorna o caminho
+da Figura \ref{fig:greedy_otimo} (b), que é ótimo.
+
+\begin{figure}[htb]
+	\centering 
+    \caption{Caso em que o Greedy garante otimalidade (heurística euclidiana). (a) Mapa inicial, (b)
+	caminho retornado pelo Greedy.}
+	\includegraphics[width=\columnwidth]{images/greedy_otimo.png}
+	\label{fig:greedy_otimo}
+\end{figure}
 
 \subsection{Greedy não é ótimo}
+
+No entanto, ao contrário no visto na Seção \ref{sec:greedy_otimo},  
+se os custos forem diferentes, o Greedy pode não ser ótimo, como 
+mostra a Figura \ref{fig:greedy_nao_otimo} (a). De forma similar ao visto com o BFS 
+na Figura \ref{fig:BFS_nao_otimo}, o Greedy acaba escolhendo o caminho que vai direto para 
+o alvo, passando por nós de custo elevado (9) e retornando um caminho de custo total 43.48, sendo que 
+o UCS na Figura \ref{fig:greedy_nao_otimo} (c) encontra o caminho ótimo, com custo total 12.
+
+\begin{figure}[htb]
+	\centering 
+    \caption{Caso em que o Greedy não garante otimalidade (heurística euclidiana). (a) Mapa inicial, (b)
+	caminho retornado pelo Greedy e (c) caminho ótimo retornado pelo UCS.}
+	\includegraphics[width=\columnwidth]{images/greedy_nao_otimo.png}
+	\label{fig:greedy_nao_otimo}
+\end{figure}
 
 
 \subsection{A* é melhor que UCS}
 
+Como o A* utiliza uma heurística para guiar a busca, ele pode ser mais eficiente
+que o UCS, como mostra a Figura \ref{fig:astar_melhor_ucs} (a). Nesse caso, o A*
+retorna o caminho da Figura \ref{fig:astar_melhor_ucs} (b) expandindo 910 nós enquato o 
+ UCS retorna o caminho da Figura \ref{fig:astar_melhor_ucs} (c) expandindo 1146 nós.
+\begin{figure}[htb]
+	\centering 
+    \caption{Caso em que o A* pode ser melhor do que o UCS (heurística euclidiana). (a) Mapa inicial, 
+	(b) caminho retornado pelo A*, e (c)
+	caminho retornado pelo UCS.}
+	\includegraphics[width=\columnwidth]{images/astar_melhor_ucs_p1.png}
+	\includegraphics[width=\columnwidth]{images/astar_melhor_ucs_p2.png}
+	\label{fig:astar_melhor_ucs}
+\end{figure}
+
+Isso ocorre uma vez que a heuirística usada pelo A* direciona a busca, expandindo menos nós durante o processo.
+Note que ambos ainda encontram a mesma solução ótima, com custo total 47.04 e tamanho 41.
+
 \subsection{A* é equivalente à UCS}
 
+O A* se torna equivalente ao UCS quando a parcela da heurística tem pouco 
+impacto quando somada ao custo do caminho. Assim, se um mapa tiver custos elevados 
+em todos os nós, a heurística acaba não influenciando tanto a busca, como mostra a
+Figura \ref{fig:astar_equiv_ucs} (a). Nesse caso, o A* retorna o caminho da Figura 
+\ref{fig:astar_equiv_ucs} (b) expandindo 114 nós, enquanto o UCS retorna o caminho da 
+Figura \ref{fig:astar_equiv_ucs} (c) expandindo 117 nós, praticamente a mesma quantidade.
+
+\begin{figure}[htb]
+	\centering 
+    \caption{Caso em que o A* pode ser melhor do que o UCS (heurística euclidiana). (a) Mapa inicial, 
+	(b) caminho retornado pelo A*, e (c)
+	caminho retornado pelo UCS.}
+	\includegraphics[width=\columnwidth]{images/astar_equiv_ucs_p1.png}
+	\includegraphics[width=\columnwidth]{images/astar_equiv_ucs_p2.png}
+	\label{fig:astar_equiv_ucs}
+\end{figure}
+
+
 \section{Conclusão}
+
+Tendo em vista os objetivos propostos, foi possível implementar os algoritmos de busca
+em Python e compará-los em diferentes mapas. Por meio dos casos de teste, foi possível
+verificar as diferenças entre os algoritmos, tanto em termos de qualidade das soluções quanto
+nos casos em que eles não garantem otimalidade.
 
 
 \bibliography{aaai24}
