@@ -301,34 +301,32 @@ def ucs(s, g, level, adj):
     ################################
     
     visited = {s: None}
-    dist = {}
+    cost_to_get = {}
 
     # inicializa distancias com distancia infinita, start com zero
     for space in level['spaces'].keys():
-        dist[space] = float('inf')
-    dist[s] = 0
+        cost_to_get[space] = float('inf')
+    cost_to_get[s] = 0
 
-    frontier = [(dist[s], s)] # fila de prioridades
+    frontier = [(cost_to_get[s], s)] # fila de prioridades
 
     while frontier:
-        current_dist, current_node = heapq.heappop(frontier)
+        current_cost_to_get, current_node = heapq.heappop(frontier)
         if current_node == g:
             break
 
         for adjacent in adj(level, current_node):
             next_node, cost_to_next = adjacent
-            next_cost = dist[current_node] + cost_to_next
+            new_cost_to_get = current_cost_to_get + cost_to_next
 
-            new_dist = current_dist + next_cost
-
-            if new_dist < dist[next_node]:
-                dist[next_node] = new_dist
+            if new_cost_to_get < cost_to_get[next_node]:
+                cost_to_get[next_node] = new_cost_to_get
                 visited[next_node] = current_node
-                heapq.heappush(frontier, (dist[next_node], next_node))
+                heapq.heappush(frontier, (cost_to_get[next_node], next_node))
 
     # pdb.set_trace()
     # Reconstruct path
-    if dist[g] == float("inf"):
+    if cost_to_get[g] == float("inf"):
         return [], visited  # nao encontrei um caminho
     # pdb.set_trace()
     path = []
@@ -392,8 +390,6 @@ def greedy_best_first(s, g, level, adj, h):
 
     ################################
 
-    return [], visited
-
 def a_star(s, g, level, adj, h):
     """ Searches for a path from the source to the goal using the A* algorithm.
 
@@ -407,13 +403,46 @@ def a_star(s, g, level, adj, h):
     Returns:
         A list of tuples containing cells from the source to the goal, and a dictionary containing the visited cells and their respective parent cells.
     """
+
+    ################################
     visited = {s: None}
+    cost_to_get = {}
 
-    ################################
-    # 3.3 INSIRA SEU CÓDIGO AQUI
-    ################################
+    # inicializa distancias com distancia infinita, start com zero
+    for space in level['spaces'].keys():
+        cost_to_get[space] = float('inf')
+    cost_to_get[s] = 0
 
-    return [], visited
+    frontier = [(cost_to_get[s] + h(s, g), s)] # fila de prioridades
+
+    while frontier:
+        current_cost_to_get, current_node = heapq.heappop(frontier)
+        if current_node == g:
+            break
+
+        for adjacent in adj(level, current_node):
+            next_node, cost_to_next = adjacent
+            new_cost_to_get = current_cost_to_get + cost_to_next + h(next_node, g)
+
+            if new_cost_to_get < cost_to_get[next_node]:
+                cost_to_get[next_node] = new_cost_to_get
+                visited[next_node] = current_node
+                heapq.heappush(frontier, (cost_to_get[next_node] + h(s, g), next_node))
+
+    # pdb.set_trace()
+    # Reconstruct path
+    if cost_to_get[g] == float("inf"):
+        return [], visited  # nao encontrei um caminho
+    # pdb.set_trace()
+    path = []
+    node = g
+    while node is not None:
+        path.append(node)
+        node = visited[node]
+    path.reverse()
+
+    return path, visited
+    ################################
 
 # ======================================
 # Heuristic functions
