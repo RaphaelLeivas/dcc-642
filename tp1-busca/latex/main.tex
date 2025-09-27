@@ -7,6 +7,7 @@
 \usepackage{courier}  % DO NOT CHANGE THIS
 \usepackage[hyphens]{url}  % DO NOT CHANGE THIS
 \usepackage{graphicx} % DO NOT CHANGE THIS
+\usepackage{indentfirst}
 \usepackage[portuguese]{babel}
 \urlstyle{rm} % DO NOT CHANGE THIS
 \def\UrlFont{\rm}  % DO NOT CHANGE THIS
@@ -89,7 +90,7 @@
 % Title
 
 
-\title{Universidade Federal de Minas Gerais \\
+\title{Universidade Federal de Minas Gerais \\[10pt]
 DCC642 - Introdução à Inteligência Artificial (2025/2) \\
  TP1: Busca no Espaço de Estados}
 \author {
@@ -108,8 +109,84 @@ O presente trabalho busca documentar
 
 \section{Objetivos}
 
-\section{Introdução}
+\section{Casos de Teste}
 
+Nessa seção são abordados 7 casos de teste para evidenciar as principais 
+diferenças entre os algoritmos estudados.
+
+
+\subsection{BFS não é ótimo}
+
+O BFS não garante otimalidade se os custos forem diferentes, como 
+mostra a Figura \ref{fig:BFS_nao_otimo}.
+
+\begin{figure}[htb]
+	\centering 
+    \caption{Caso em que o BFS não é ótimo. (a) Mapa inicial, (b)
+	caminho retornado pelo BFS, (c) caminho ótimo encontrado pelo UCS.}
+	\includegraphics[width=\columnwidth]{images/BFS_nao_otimo.png}
+	\label{fig:BFS_nao_otimo}
+\end{figure}
+
+Na Figura \ref{fig:BFS_nao_otimo} (a), temos que o caminho direto do início ao alvo 
+passa por casas de custo elevado (9), enquanto as demais casas possuem custo unitário.
+O BFS, por explorar os nós em camadas, acaba encontrando o caminho (b) que vai diretamente 
+até o alvo, passando pelos nós custosos e retornando um caminho de custo total 55.
+
+Contudo, claramente existe um camingo melhor que passa pelos nós de custo unitário.
+Assim, usando o UCS é possível encontrar o caminho da Figura \ref{fig:BFS_nao_otimo} (c), 
+com custo total 8, que é a solução ótima para o problema.
+
+\subsection{BFS é equivalente à UCS}
+
+BFS e UCS são equivalentes quando todos os custos são iguais, como mostra 
+a Figura \ref{fig:BFS_UCS_equiv} (a). Todas as arestas do mapa possuem
+ custo unitário, de modo que a solução encontrada pelo BFS na Figura \ref{fig:BFS_UCS_equiv} (b) 
+ é igual à solução do UCS na Figura \ref{fig:BFS_UCS_equiv} (c). Além disso, note que 
+ a maneira em que os nós são explorados é bastante parecida, avançando radialmente 
+ a partir do nó inicial.
+
+
+\begin{figure}[htb]
+	\centering 
+    \caption{Caso em que o BFS e o UCS são equivalentes. (a) Mapa inicial, (b)
+	caminho retornado pelo BFS, (c) caminho retornado pelo UCS.}
+	\includegraphics[width=\columnwidth]{images/BFS_UCS_equiv.png}
+	\label{fig:BFS_UCS_equiv}
+\end{figure}
+
+
+\subsection{DFS retorna a solução ótima}
+
+O DFS em geral não é ótimo uma vez que ele retorna o primeiro caminho encontrado
+e não necessariamente o de menor custo. Contudo, em alguns casos o DFS pode
+retornar a solução ótima, como mostra a Figura \ref{fig:DFS_otimo} (a), em que 
+todos os custos são iguais e todas as soluções possíveis possuem a mesma 
+profundidade.
+
+\begin{figure}[htb]
+	\centering 
+    \caption{Caso em que o DFS garante otimalidade. (a) Mapa inicial, (b)
+	caminho retornado pelo DFS.}
+	\includegraphics[width=\columnwidth]{images/DFS_otimo.png}
+	\label{fig:DFS_otimo}
+\end{figure}
+
+Note que esse caso é bastante específico e não é possível garantir que o DFS
+sempre retorne a solução ótima. 
+
+\subsection{Greedy é ótimo}
+
+A busca gulosa pela melhor escolha (Greedy) é ótima se 
+
+\subsection{Greedy não é ótimo}
+
+
+\subsection{A* é melhor que UCS}
+
+\subsection{A* é equivalente à UCS}
+
+\section{Conclusão}
 
 
 \bibliography{aaai24}
