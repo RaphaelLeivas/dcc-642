@@ -427,7 +427,7 @@ def a_star(s, g, level, adj, h):
             if new_cost_to_get < cost_to_get[next_node]:
                 cost_to_get[next_node] = new_cost_to_get
                 visited[next_node] = current_node
-                heapq.heappush(frontier, (cost_to_get[next_node] + h(s, g), next_node))
+                heapq.heappush(frontier, (cost_to_get[next_node], next_node))
 
     # pdb.set_trace()
     # Reconstruct path
