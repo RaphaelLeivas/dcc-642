@@ -314,8 +314,6 @@ def ucs(s, g, level, adj):
         current_dist, current_node = heapq.heappop(frontier)
         if current_node == g:
             break
-        if current_dist > dist[current_node]:
-            continue
 
         for adjacent in adj(level, current_node):
             next_node, cost_to_next = adjacent
@@ -360,10 +358,38 @@ def greedy_best_first(s, g, level, adj, h):
     Returns:
         A list of tuples containing cells from the source to the goal, and a dictionary containing the visited cells and their respective parent cells.
     """
-    visited = {s: None}
 
     ################################
     # 3.2 INSIRA SEU CÓDIGO AQUI
+    visited = {s: None}
+    frontier = [(h(s, g), s)] # fila de prioridades pela heuristica
+
+    while frontier:
+        current_dist, current_node = heapq.heappop(frontier)
+        if current_node == g:
+            break
+
+        for adjacent in adj(level, current_node):
+            next_node, cost_to_next = adjacent
+
+            if next_node not in visited:
+                visited[next_node] = current_node
+                heapq.heappush(frontier, (h(next_node, g), next_node))
+
+    # Reconstruct path
+    if g not in visited:
+        return [], visited  # nao encontrei um caminho
+    
+    # pdb.set_trace()
+    path = []
+    node = g
+    while node is not None:
+        path.append(node)
+        node = visited[node]
+    path.reverse()
+
+    return path, visited
+
     ################################
 
     return [], visited
