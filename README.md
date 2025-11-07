@@ -53,6 +53,15 @@ python -m pyflowchart test.py -o test.html
   pip install -r requirements.txt # Instalar dependencias
   python server.py -port 5001 # Executar o servidor
 
+# Powershell
+
+run as admin
+cd C:/dev
+ python -m venv myEnv # Criar ambiente virtual python
+  . .\myEnv\Scripts\activate # Ativar ambiente virtual 
+  pip install -r requirements.txt # Instalar dependencias
+  python server.py -port 5001 # Executar o servidor
+
 
 # TP1 Instruções
 
