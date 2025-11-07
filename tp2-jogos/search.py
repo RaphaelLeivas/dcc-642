@@ -73,8 +73,6 @@ def other(player: int) -> int:
 # -----------------------------------------------------------------------------
 # ÚNICO PONTO A SER IMPLEMENTADO PELOS ALUNOS
 # -----------------------------------------------------------------------------
-EMPTY = 0
-
 def evaluate_window(window, piece):
     score = 0
     opp_piece = 1 if piece == 2 else 2
@@ -130,9 +128,23 @@ def score_position(board, piece):
 
     return score
 
+nodes_expanded = 0
+
 def minimax(board: List[List[int]], player: int, depth: int) -> Tuple[int, int]:
-    if depth == 0 or terminal(board)[0]:
+    global nodes_expanded
+    nodes_expanded += 1 
+
+    if depth == 0:
         return score_position(board, player), None
+    
+    is_terminal, winner = terminal(board)
+    if is_terminal:
+        if winner == P1:
+            return float('-inf'), None
+        if winner == P2:
+            return float('inf'), None
+        else:
+            return 0, None
     
     if player == P1: # minimizing player
         minValue = float('inf')
@@ -160,6 +172,59 @@ def minimax(board: List[List[int]], player: int, depth: int) -> Tuple[int, int]:
             if value > maxValue:
                 maxValue = value
                 best_move = move
+           
+        return maxValue, best_move
+    
+def minimax_alphabeta(board: List[List[int]], player: int, depth: int, alpha: int, beta: int) -> Tuple[int, int]:
+    global nodes_expanded
+    nodes_expanded += 1 
+
+    if depth == 0:
+        return score_position(board, player), None
+    
+    is_terminal, winner = terminal(board)
+    if is_terminal:
+        if winner == P1:
+            return -math.inf, None
+        if winner == P2:
+            return math.inf, None
+        else:
+            return 0, None
+    
+    if player == P1: # minimizing player
+        minValue = math.inf
+        best_move = random.choice(valid_moves(board))
+
+        temp_board = copy_board(board)
+        for move in valid_moves(temp_board):
+            child_board = make_move(temp_board, move, player)
+            value = minimax_alphabeta(child_board, other(player), depth - 1, alpha, beta)[0]
+
+            if value < minValue:
+                minValue = value
+                best_move = move
+
+            beta = min(beta, value)
+            if alpha >= beta:
+                break
+
+        return minValue, best_move
+    else: # maximizing player
+        maxValue = -math.inf
+        best_move = random.choice(valid_moves(board))
+
+        temp_board = copy_board(board)
+        for move in valid_moves(temp_board):
+            child_board = make_move(temp_board, move, player)
+            value = minimax_alphabeta(child_board, other(player), depth - 1, alpha, beta)[0]
+
+            if value > maxValue:
+                maxValue = value
+                best_move = move
+
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                break
            
         return maxValue, best_move
 
@@ -194,13 +259,13 @@ def choose_move(board: List[List[int]], player: int, config: Dict) -> Tuple[int,
         # Sem jogadas: devolve 0 por convenção (servidor lida com isso)
         return move
     
+    global nodes_expanded
+    nodes_expanded = 0
+    
     # VERSÃO INICIAL: escolhe aleatoriamente entre as jogadas legais
     # move = random.choice(legal)
-
     move = minimax(board, player, max_depth)[1]
-
-    print("position_value = ", score_position(board, player))
-
-    # move = minimax(board, player, max_depth)
+    # move = minimax_alphabeta(board, player, max_depth, alpha=-math.inf, beta=math.inf)[1]
+    print("Expanded nodes = ", nodes_expanded)
 
     return move
