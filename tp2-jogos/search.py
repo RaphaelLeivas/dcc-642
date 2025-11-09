@@ -229,31 +229,24 @@ def minimax_alphabeta(board: List[List[int]], player: int, depth: int, alpha: in
            
         return maxValue, best_move
     
-def iterative_deepening(board, player, max_depth):
-    scores_list = []
-    moves_list = []
+def iterative_deepening(board, player, max_depth, start, max_time_ms):
+    best_move = None
+    depth_reached = 0
 
-    for depth in range(1, max_depth + 1):
+    for depth in range(2, 100000):
+        # vai aumentando a profundidade ate o tempo permitir
+        if max_time_ms > 0 and (time.time() - start) * 1000.0 >= (max_time_ms - 500):
+            break
+
         global nodes_expanded
         nodes_expanded = 0
 
-        score, move = minimax_alphabeta(board, player, depth, alpha=-math.inf, beta=math.inf)
+        move = minimax_alphabeta(board, player, depth, alpha=-math.inf, beta=math.inf)[1]
 
-        scores_list.append(score)
-        moves_list.append(move)
+        best_move = move
+        depth_reached = depth
 
-        print(f"Depth {depth}: Best Move = {move}, Score = {score}, Nodes = {nodes_expanded}")
-
-    if player == P1:
-        # minimizing
-        # escolha o que tem menor score
-        idx_min = scores_list.index(min(scores_list))
-        return scores_list[idx_min], moves_list[idx_min]
-    else:
-        # maximizing
-        # escolha o que tem maior score
-        idx_max = scores_list.index(max(scores_list))
-        return scores_list[idx_max], moves_list[idx_max]
+    return best_move, depth_reached
 
 def choose_move(board: List[List[int]], player: int, config: Dict) -> Tuple[int, Dict]:
     """
@@ -291,20 +284,20 @@ def choose_move(board: List[List[int]], player: int, config: Dict) -> Tuple[int,
 
     random.seed(time.time())
 
-    # if player == P1:
-    #     move = minimax_alphabeta(board, player, max_depth, alpha=-math.inf, beta=math.inf)[1]
+    if player == P1:
+        move, depth = iterative_deepening(board, player, max_depth, start, max_time_ms)
 
-    #     f = open('minimax-alfabeta.csv','a')
-    #     f.write(f'{max_depth},{time.time() - start},{nodes_expanded}\n')
-    #     f.close()
-    # else:
-    #     move = minimax(board, player, max_depth)[1]
+        f = open('ids.csv','a')
+        f.write(f'{max_time_ms},{time.time() - start},{nodes_expanded},{depth}\n')
+        f.close()
+    else:
+        move = minimax_alphabeta(board, player, 5, alpha=-math.inf, beta=math.inf)[1]
     
     # VERSÃO INICIAL: escolhe aleatoriamente entre as jogadas legais
     # move = random.choice(legal)
     # move = minimax(board, player, max_depth)[1]
-    move = minimax_alphabeta(board, player, max_depth, alpha=-math.inf, beta=math.inf)[1]
-    # move = iterative_deepening(board, player, max_depth)[1]
+    # move = minimax_alphabeta(board, player, max_depth, alpha=-math.inf, beta=math.inf)[1]
+    # move = iterative_deepening(board, player, max_depth)
 
     # print("player = ", player)
 
