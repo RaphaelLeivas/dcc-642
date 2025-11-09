@@ -289,19 +289,21 @@ def choose_move(board: List[List[int]], player: int, config: Dict) -> Tuple[int,
     global nodes_expanded
     nodes_expanded = 0
 
-    if player == P1:
-        move = minimax(board, player, max_depth)[1]
+    random.seed(time.time())
 
-        f = open('minimax.csv','a')
-        f.write(f'{max_depth},{time.time() - start},{nodes_expanded}\n')
-        f.close()
-    else:
-        move = random.choice(legal)
+    # if player == P1:
+    #     move = minimax_alphabeta(board, player, max_depth, alpha=-math.inf, beta=math.inf)[1]
+
+    #     f = open('minimax-alfabeta.csv','a')
+    #     f.write(f'{max_depth},{time.time() - start},{nodes_expanded}\n')
+    #     f.close()
+    # else:
+    #     move = minimax(board, player, max_depth)[1]
     
     # VERSÃO INICIAL: escolhe aleatoriamente entre as jogadas legais
     # move = random.choice(legal)
     # move = minimax(board, player, max_depth)[1]
-    # move = minimax_alphabeta(board, player, max_depth, alpha=-math.inf, beta=math.inf)[1]
+    move = minimax_alphabeta(board, player, max_depth, alpha=-math.inf, beta=math.inf)[1]
     # move = iterative_deepening(board, player, max_depth)[1]
 
     # print("player = ", player)

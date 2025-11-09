@@ -110,6 +110,9 @@ Neste trabalho, algoritmos de busca competitiva são implementados em Python par
 competirem em um jogo de Ligue-4. Diferentes algoritmos são implementados e sua performance 
 é comparada experimentalmente com base em diferentes métricas. 
 
+As implementações dos algoritmos nesse trabalho são baseadas nas implementações 
+de \cite{russell2020aima}.
+
 \section{Objetivos}
 
 Os objetivos principais do trabalho são: 
@@ -252,10 +255,10 @@ profundidades maiores.
 Podemos tomar a média e o desvio padrão para cada uma das medições acima, e junto 
 com a taxa de vitórias para cada profundidade, obtemos os resultados da Tabela \ref{tab:minimax-aleatorio}.
 
-\begin{table}[htbp] % [htbp] specifies preferred placement: here, top, bottom, page
-    \centering % Centers the table on the page
-    \caption{Resultados finais do experimento Minimax vs Aleatório.} % Table caption
-    \label{tab:minimax-aleatorio} % Label for cross-referencing
+\begin{table}[htbp] 
+    \centering 
+    \caption{Resultados finais do experimento Minimax vs Aleatório.} 
+    \label{tab:minimax-aleatorio} 
 
     \begin{tabular}{c|c|c|c} 
         Depth & Vitórias (\%) & Tempo (ms) & Nós \\
@@ -269,9 +272,92 @@ com a taxa de vitórias para cada profundidade, obtemos os resultados da Tabela 
 
 \subsection{Alfa-beta vs Minimax}
 
+Repetindo o mesmo procedimento do primeiro experimento, mas dessa 
+vez usando o minimax com a pode alta-beta vs o minimax, obtemos os 
+resultados exibidos na Tabela \ref{tab:minimax-alfabeta}
+
+\begin{table}[htbp] 
+    \centering 
+    \caption{Resultados finais do experimento Minimax Alfa-Beta vs Minimax.} 
+    \label{tab:minimax-alfabeta} 
+
+    \begin{tabular}{c|c|c|c} 
+        Depth & Vitórias (\%) & Tempo (ms) & Nós \\
+		\hline 
+        2 & 0 & $1.7 \pm 2.7$ & $31 \pm 7.96$\\
+        3 & 100 & $6.4 \pm 3.8$ & $125.6 \pm 52.2$\\
+        4 & 0 & $10.1 \pm 5.9$ & $265 \pm 107.7$\\
+        5 & 100 & $83.2 \pm 66.3$ & $2366.4 \pm 1916$\\
+    \end{tabular}
+\end{table}
+
+Comparando as Tabelas \ref{tab:minimax-aleatorio} e \ref{tab:minimax-alfabeta},
+vemos que a poda causou uma redução significativa nos tempos e números de nós  
+expandidos a cada lance, em particular para maiores profundidades.
+A Figura \ref{fig:diff-alfabeta} sumariza as diferenças entre os tempos e 
+números de nós visitados para ambos algoritmos, destacando a redução com 
+a poda alfa-beta.
+
+\begin{figure}[htb]
+	\centering 
+    \caption{Diferenças entre os tempos e números de nós expandidos pela profundidade entre os algoritmos.}
+	\includegraphics[width=\columnwidth]{images/diff-alfabeta-time.png}
+	\includegraphics[width=\columnwidth]{images/diff-alfabeta-nodes.png}
+	\label{fig:diff-alfabeta}
+\end{figure}
+
+\subsection{Iterative Deepening vs Alfa-beta}
+
+COMPLETAR
+
+\subsection{Humano vs Alfa-beta}
+
+A melhor IA obtida foi o Minimax com poda Alfa-beta e profundidade 5. 
+AO jogar 5 partidas contra ela, obtive os resultados exibidos na 
+Tabela \ref{tab:humano-ia}.
+
+\begin{table}[htbp] 
+    \centering 
+    \caption{Resultados finais das partidas humano versus melhor IA.} 
+    \label{tab:humano-ia} 
+
+    \begin{tabular}{c|c|c} 
+        Partida & Vencedor & Número de Lances \\
+		\hline 
+        1 & IA & $18$ \\
+        2 & IA & $14$ \\
+        3 & IA & $12$ \\
+        4 & Empate & $22$ \\
+        5 & IA & $17$ \\
+    \end{tabular}
+\end{table}
+
+Não consegui vencer a melhor IA em nenhuma das partidas. Quase sempre eu perdia 
+por não ver alguma diagonal ameaçada. Uma outra observação interessante é que a IA sempre 
+começa com a mesma jogada, exibida na Figura \ref{fig:jogada-inicial-ia}.
+Se eu não bloquear a primeira linha, ela sempre irá colocar nas colunas adjacentes 
+e ameaçar colcoar 3 bolas em sequência com os extremos abertos, uma ameaça 
+dupla que vence o jogo.
+
+\begin{figure}[htb]
+	\centering 
+    \caption{Jogada inicial da IA em todas as partidas.}
+	\includegraphics[width=\columnwidth]{images/jogada-inicial-ia.png}
+	\label{fig:jogada-inicial-ia}
+\end{figure}
+
+A jogada inicial da Figura \ref{fig:jogada-inicial-ia} só ocorre em profundidade maior que 4.
+Para profundidades 2 e 3, ela começa em um dos cantos do tabuleiro.
+
+\section{Discussão}
+
+ trade-offs e limitações.
+
 \section{Conclusão}
 
 COMPLETAR DEPOIS
+
+sintse do que funcionou melhor e limitações
 
 
 \bibliography{aaai24}
