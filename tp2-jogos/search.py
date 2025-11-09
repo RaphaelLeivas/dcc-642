@@ -2,6 +2,7 @@ from typing import List, Tuple, Optional, Dict
 import time
 import math
 import random
+import csv
 
 ROWS, COLS = 6, 7
 EMPTY, P1, P2 = 0, 1, 2
@@ -140,14 +141,14 @@ def minimax(board: List[List[int]], player: int, depth: int) -> Tuple[int, int]:
     is_terminal, winner = terminal(board)
     if is_terminal:
         if winner == P1:
-            return float('-inf'), None
+            return -math.inf, None
         if winner == P2:
-            return float('inf'), None
+            return math.inf, None
         else:
             return 0, None
     
     if player == P1: # minimizing player
-        minValue = float('inf')
+        minValue = math.inf
         best_move = random.choice(valid_moves(board))
 
         temp_board = copy_board(board)
@@ -161,7 +162,7 @@ def minimax(board: List[List[int]], player: int, depth: int) -> Tuple[int, int]:
 
         return minValue, best_move
     else: # maximizing player
-        maxValue = float('-inf')
+        maxValue = -math.inf
         best_move = random.choice(valid_moves(board))
 
         temp_board = copy_board(board)
@@ -287,13 +288,25 @@ def choose_move(board: List[List[int]], player: int, config: Dict) -> Tuple[int,
     
     global nodes_expanded
     nodes_expanded = 0
+
+    if player == P1:
+        move = minimax(board, player, max_depth)[1]
+
+        f = open('minimax.csv','a')
+        f.write(f'{max_depth},{time.time() - start},{nodes_expanded}\n')
+        f.close()
+    else:
+        move = random.choice(legal)
     
     # VERSÃO INICIAL: escolhe aleatoriamente entre as jogadas legais
     # move = random.choice(legal)
     # move = minimax(board, player, max_depth)[1]
-    move = minimax_alphabeta(board, player, max_depth, alpha=-math.inf, beta=math.inf)[1]
+    # move = minimax_alphabeta(board, player, max_depth, alpha=-math.inf, beta=math.inf)[1]
     # move = iterative_deepening(board, player, max_depth)[1]
 
-    print("Expanded nodes = ", nodes_expanded)
+    # print("player = ", player)
+
+    # print("Expanded nodes = ", nodes_expanded)
+
 
     return move

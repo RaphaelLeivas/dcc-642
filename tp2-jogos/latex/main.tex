@@ -19,7 +19,8 @@
 %
 % These are recommended to typeset algorithms but not required. See the subsubsection on algorithms. Remove them if you don't have algorithms in your paper.
 \usepackage{algorithm}
-\usepackage{algorithmic}
+% \usepackage{algorithmic}
+\usepackage{algpseudocode}
 
 %
 % These are are recommended to typeset listings but not required. See the subsubsection on listing. Remove this block if you don't have listings in your paper.
@@ -122,14 +123,155 @@ Os objetivos principais do trabalho são:
 
 \section{Metodologia}
 
-O primeiro passo é definir a heurística de avaliação. 
+\subsection{Heurística de Avaliação}
+
+O primeiro passo é definir a heurística de avaliação. Definimos uma heurística da seguinte 
+forma:
+
+\begin{itemize}
+	\item Para cada sequência de 4 posições na horizontal, vertical ou diagonal, adicionamos um valor 
+	em uma ordem de grandeza: sequência de duas peças soma-se 10, sequência de três peças soma-se 100, quatro, 1000. 
+	\item O valor atribuído varia no sentido positivo indicando que o estado é favorável ao jogar 2, e no sentido negativo 
+	para o jogador 1. Assim, o jogador P1 assume o papel de minimizar e o P2 de maximizar.
+	\item As células do centro são mais importantes no jogo, e portanto são multiplicadas por um fator 6.
+\end{itemize}
+
+Dessa forma, a heurística avalia os tabuleiros como mostra a Figura \ref{fig:heuristica}.
+
+\begin{figure}[htb]
+	\centering 
+    \caption{Exemplos de avaliação do estado atual do jogo com a heurística definida.}
+	\includegraphics[width=\columnwidth]{images/heuristica.png}
+	\label{fig:heuristica}
+\end{figure}
+
+Na Figura \ref{fig:heuristica} (a), o jogo parece bem empatado, com ambos jogadores sem ameaças iminentes e com controle
+central disputado. Assim, a avaliação é próxima de zero: $f(n) = 16$. Em (b), o jogador amarelo tem sequências de 3 peças 
+sem bloqueio e bom controle central, de modo que $f(n) = 222$, um valor positivo elevado. Em (c) temos o contrário de (b), 
+logo a heurística é um valor elevado negativo: $f(n) = - 308$. Por fim, no caso de vitória de um jogador como ocorre em (d), 
+a função retorna $\pm \infty$.
+
+\subsection{Agente Minimax}
+
+O primeiro agente implementado é o Minimax. O jogador vermelho assume o papel de  
+minimizar e o amarelo de maximizar. O Algoritmo \ref{alg:minimax} mostra 
+o pseudocódigo para o Minimax usado no projeto. Os experimentos comparam a performance 
+do minimax para diferentes valores de profundidade $depth$, bem como o tempo de execução.
+
+\begin{algorithm}[H]
+\caption{Minimax.} \label{alg:minimax}
+\begin{algorithmic}[1]
+\Function{Minimax}{$state, depth, maxPlayer$}
+    \If{$depth = 0$ or \Call{IsTerminal}{$state$}}
+        \State \Return \Call{Evaluate}{$state$}
+    \EndIf
+
+    \If{$maxPlayer$}
+        \State $maxEval \gets -\infty$
+        \ForAll{$child$ in \Call{Successors}{$state$}}
+            \State $eval \gets$ \Call{Minimax}{$child, depth - 1, \textbf{false}$}
+            \State $maxEval \gets \max(maxEval, eval)$
+        \EndFor
+        \State \Return $maxEval$
+    \Else
+        \State $minEval \gets +\infty$
+        \ForAll{$child$ in \Call{Successors}{$state$}}
+            \State $eval \gets$ \Call{Minimax}{$child, depth - 1, \textbf{true}$}
+            \State $minEval \gets \min(minEval, eval)$
+        \EndFor
+        \State \Return $minEval$
+    \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Agente Minimax com Poda Alfa Beta}
+
+Para adicionar a Poda Alfa Beta no Algoritmo \ref{alg:minimax}, basta adicionar a seguinte 
+condicional no algoritmo dentro do loop dos sucessores:
+
+\begin{algorithm}[H]
+\caption{Minimax com Poda Alfa Beta.} \label{alg:alfa-beta}
+\begin{algorithmic}[1]
+\If{$\alpha \geq \beta$}
+	\State \textbf{break} 
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+Note que $\alpha$ e $\beta$ agora são argumentos passados para a função Minimax.
+O número de nós expandidos com a poda é comparado com o Minimax sem pode, de modo a verificar experimentalmente 
+o impacto da poda na execução do algoritmo.
+
+\subsection{Iterative Deepening}
+
+COMPLETAR DEPOIS
+
+\subsection{Experimentos}
+
+Os seguintes experimentos serão realizados:
+
+\begin{itemize}
+	\item Minimax vs Aleatório 
+	\item Alfa-Beta vs Minimax (sem poda)
+	\item Iterative Deepening vs Alfa-Beta
+	\item IA do Aluno vs Jogador Humano
+\end{itemize}
+
+Os experimentos são realizados com o seguinte procedimento:
+
+\begin{enumerate}
+	\item Realiza 3 jogos entre o Minimax e o oponente para cada nível de profundidade; 
+	\item Salva os tempos por jogada e número de nós expandidos em cada jogada em um csv;
+	\item Analisa os dados a posteriori com \verb|matplotlib| e extrai as conclusões.
+\end{enumerate}
+
+\section{Resultados}
+
+\subsection{Minimax vs Aleatório}
+
+A Figura \ref{fig:histograma-minimax-time} mostra os tempos por lance para diferentes profundidades do Minimax, e A
+Figura \ref{fig:histograma-minimax-nodes} número de nós expandidos
+com diferentes profundidades configuradas. Como esperado, o algoritmo gasta mais tempo e expande mais nós para 
+profundidades maiores.
+
+\begin{figure}[htb]
+	\centering 
+    \caption{Histograma de tempos gasto por lance para o Minimax para diferentes profundidades.}
+	\includegraphics[width=\columnwidth]{images/histograma-minimax-time.png}
+	\label{fig:histograma-minimax-time}
+\end{figure}
+
+\begin{figure}[htb]
+	\centering 
+    \caption{Histograma de nós expandidos por lance para o Minimax para diferentes profundidades.}
+	\includegraphics[width=\columnwidth]{images/histograma-minimax-nodes.png}
+	\label{fig:histograma-minimax-nodes}
+\end{figure}
+
+Podemos tomar a média e o desvio padrão para cada uma das medições acima, e junto 
+com a taxa de vitórias para cada profundidade, obtemos os resultados da Tabela \ref{tab:minimax-aleatorio}.
+
+\begin{table}[htbp] % [htbp] specifies preferred placement: here, top, bottom, page
+    \centering % Centers the table on the page
+    \caption{Resultados finais do experimento Minimax vs Aleatório.} % Table caption
+    \label{tab:minimax-aleatorio} % Label for cross-referencing
+
+    \begin{tabular}{c|c|c|c} 
+        Depth & Vitórias (\%) & Tempo (ms) & Nós \\
+		\hline 
+        2 & 0 & $3.6 \pm 4.9$ & $48.2 \pm 12$\\
+        3 & 100 & $14.1 \pm 7.4$ & $384 \pm 30$\\
+        4 & 100 & $92.5 \pm 33.2$ & $2357 \pm 695$\\
+        5 & 100 & $618 \pm 130$ & $16769 \pm 2354$\\
+    \end{tabular}
+\end{table}
+
+\subsection{Alfa-beta vs Minimax}
 
 \section{Conclusão}
 
-Tendo em vista os objetivos propostos, foi possível implementar os algoritmos de busca
-em Python e compará-los em diferentes mapas. Por meio dos casos de teste, foi possível
-verificar as diferenças entre os algoritmos, tanto em termos de qualidade das soluções quanto
-nos casos em que eles não garantem otimalidade.
+COMPLETAR DEPOIS
 
 
 \bibliography{aaai24}
