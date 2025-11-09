@@ -227,6 +227,32 @@ def minimax_alphabeta(board: List[List[int]], player: int, depth: int, alpha: in
                 break
            
         return maxValue, best_move
+    
+def iterative_deepening(board, player, max_depth):
+    scores_list = []
+    moves_list = []
+
+    for depth in range(1, max_depth + 1):
+        global nodes_expanded
+        nodes_expanded = 0
+
+        score, move = minimax_alphabeta(board, player, depth, alpha=-math.inf, beta=math.inf)
+
+        scores_list.append(score)
+        moves_list.append(move)
+
+        print(f"Depth {depth}: Best Move = {move}, Score = {score}, Nodes = {nodes_expanded}")
+
+    if player == P1:
+        # minimizing
+        # escolha o que tem menor score
+        idx_min = scores_list.index(min(scores_list))
+        return scores_list[idx_min], moves_list[idx_min]
+    else:
+        # maximizing
+        # escolha o que tem maior score
+        idx_max = scores_list.index(max(scores_list))
+        return scores_list[idx_max], moves_list[idx_max]
 
 def choose_move(board: List[List[int]], player: int, config: Dict) -> Tuple[int, Dict]:
     """
@@ -264,8 +290,10 @@ def choose_move(board: List[List[int]], player: int, config: Dict) -> Tuple[int,
     
     # VERSÃO INICIAL: escolhe aleatoriamente entre as jogadas legais
     # move = random.choice(legal)
-    move = minimax(board, player, max_depth)[1]
-    # move = minimax_alphabeta(board, player, max_depth, alpha=-math.inf, beta=math.inf)[1]
+    # move = minimax(board, player, max_depth)[1]
+    move = minimax_alphabeta(board, player, max_depth, alpha=-math.inf, beta=math.inf)[1]
+    # move = iterative_deepening(board, player, max_depth)[1]
+
     print("Expanded nodes = ", nodes_expanded)
 
     return move
