@@ -3,9 +3,15 @@ import time
 import math
 import random
 import csv
+import pdb
 
 ROWS, COLS = 6, 7
 EMPTY, P1, P2 = 0, 1, 2
+MAX_TIME_TOLERANCE = 250 # in ms
+
+nodes_expanded = 0
+start = 0
+max_time_global = 0
 
 # -----------------------------------------------------------------------------
 # Utilidades de tabuleiro (PRONTAS)
@@ -129,8 +135,6 @@ def score_position(board, piece):
 
     return score
 
-nodes_expanded = 0
-
 def minimax(board: List[List[int]], player: int, depth: int) -> Tuple[int, int]:
     global nodes_expanded
     nodes_expanded += 1 
@@ -191,13 +195,20 @@ def minimax_alphabeta(board: List[List[int]], player: int, depth: int, alpha: in
             return math.inf, None
         else:
             return 0, None
-    
+        
+    global start
+    global max_time_global
+
     if player == P1: # minimizing player
         minValue = math.inf
         best_move = random.choice(valid_moves(board))
 
         temp_board = copy_board(board)
         for move in valid_moves(temp_board):
+            if max_time_global > 0 and (time.time() - start) * 1000.0 >= (max_time_global - MAX_TIME_TOLERANCE):
+                print("RAISED AT", (time.time() - start) * 1000.0)
+                raise Exception("custom timeout")
+
             child_board = make_move(temp_board, move, player)
             value = minimax_alphabeta(child_board, other(player), depth - 1, alpha, beta)[0]
 
@@ -216,6 +227,10 @@ def minimax_alphabeta(board: List[List[int]], player: int, depth: int, alpha: in
 
         temp_board = copy_board(board)
         for move in valid_moves(temp_board):
+            if max_time_global > 0 and (time.time() - start) * 1000.0 >= (max_time_global - MAX_TIME_TOLERANCE):
+                print("RAISED AT", (time.time() - start) * 1000.0)
+                raise Exception("timeout")
+
             child_board = make_move(temp_board, move, player)
             value = minimax_alphabeta(child_board, other(player), depth - 1, alpha, beta)[0]
 
@@ -229,22 +244,27 @@ def minimax_alphabeta(board: List[List[int]], player: int, depth: int, alpha: in
            
         return maxValue, best_move
     
-def iterative_deepening(board, player, max_depth, start, max_time_ms):
+def iterative_deepening(board, player, max_depth):
     best_move = None
     depth_reached = 0
 
-    for depth in range(2, 100000):
+    for depth in range(2, 1000000):
+        global start
+        global max_time_global
+
         # vai aumentando a profundidade ate o tempo permitir
-        if max_time_ms > 0 and (time.time() - start) * 1000.0 >= (max_time_ms - 500):
+        if max_time_global > 0 and (time.time() - start) * 1000.0 >= (max_time_global - MAX_TIME_TOLERANCE):
             break
 
         global nodes_expanded
         nodes_expanded = 0
 
-        move = minimax_alphabeta(board, player, depth, alpha=-math.inf, beta=math.inf)[1]
-
-        best_move = move
-        depth_reached = depth
+        try:
+            move = minimax_alphabeta(board, player, depth, alpha=-math.inf, beta=math.inf)[1]
+            best_move = move
+            depth_reached = depth
+        except Exception:
+            pass
 
     return best_move, depth_reached
 
@@ -266,7 +286,11 @@ def choose_move(board: List[List[int]], player: int, config: Dict) -> Tuple[int,
 
     print(f"AI choose_move called with max_time_ms={max_time_ms}, max_depth={max_depth}, player={player}")
     
+    global start
     start = time.time()
+
+    global max_time_global
+    max_time_global = max_time_ms
 
     # Função auxiliar para checar tempo decorrido   
     def time_exceeded():
@@ -285,7 +309,7 @@ def choose_move(board: List[List[int]], player: int, config: Dict) -> Tuple[int,
     random.seed(time.time())
 
     if player == P1:
-        move, depth = iterative_deepening(board, player, max_depth, start, max_time_ms)
+        move, depth = iterative_deepening(board, player, max_depth)
 
         f = open('ids.csv','a')
         f.write(f'{max_time_ms},{time.time() - start},{nodes_expanded},{depth}\n')
@@ -297,7 +321,7 @@ def choose_move(board: List[List[int]], player: int, config: Dict) -> Tuple[int,
     # move = random.choice(legal)
     # move = minimax(board, player, max_depth)[1]
     # move = minimax_alphabeta(board, player, max_depth, alpha=-math.inf, beta=math.inf)[1]
-    # move = iterative_deepening(board, player, max_depth)
+    # move, depth = iterative_deepening(board, player, max_depth)
 
     # print("player = ", player)
 

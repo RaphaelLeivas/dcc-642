@@ -42,6 +42,7 @@ To do all those things, do the following:
 - run the program: `python main.py`
 - to exit the virtual environment afterwards: `deactivate`
 
+- & C:/dev/ufmg-2025-2/dcc-642/myEnv/Scripts/Activate.ps1
 
 python -m pyflowchart test.py -o test.html
 
