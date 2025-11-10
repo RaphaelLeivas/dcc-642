@@ -115,7 +115,7 @@ são algoritmos usadas em jogos de dois jogadores para escolher o
 melhor lance possível. 
 O Minimax simula jogadas futuras alternando turnos de maximizar e 
 minimizar para avaliar estados do jogo e selecionar o que leva ao 
-melhor resultado garantido, usando uma heurísticad e avaliação do estado 
+melhor resultado garantido, usando uma heurística de avaliação do estado 
 atual do tabuleiro. 
 
 A poda Alfa-Beta é uma otimização do Minimax que reduz o número de nós 
@@ -223,7 +223,7 @@ condicional no algoritmo dentro do loop dos sucessores:
 \end{algorithm}
 
 Note que $\alpha$ e $\beta$ agora são argumentos passados para a função Minimax.
-O número de nós expandidos com a poda é comparado com o Minimax sem pode, de modo a verificar experimentalmente 
+O número de nós expandidos com a poda é comparado com o Minimax sem poda, de modo a verificar experimentalmente 
 o impacto da poda na execução do algoritmo.
 
 \subsection{Iterative Deepening}
@@ -278,8 +278,8 @@ Os experimentos são realizados com o seguinte procedimento:
 
 \subsection{Minimax vs Aleatório}
 
-A Figura \ref{fig:histograma-minimax-time} mostra os tempos por lance para diferentes profundidades do Minimax, e A
-Figura \ref{fig:histograma-minimax-nodes} número de nós expandidos
+A Figura \ref{fig:histograma-minimax-time} mostra os tempos por lance para diferentes profundidades do Minimax, e a
+Figura \ref{fig:histograma-minimax-nodes} exibe o número de nós expandidos
 com diferentes profundidades configuradas. Como esperado, o algoritmo gasta mais tempo e expande mais nós para 
 profundidades maiores.
 
@@ -318,7 +318,7 @@ com a taxa de vitórias para cada profundidade, obtemos os resultados da Tabela 
 \subsection{Alfa-beta vs Minimax}
 
 Repetindo o mesmo procedimento do primeiro experimento, mas dessa 
-vez usando o minimax com a pode alta-beta vs o minimax, obtemos os 
+vez usando o minimax com a poda alta-beta vs o minimax, obtemos os 
 resultados exibidos na Tabela \ref{tab:minimax-alfabeta}
 
 \begin{table}[htbp] 
@@ -416,7 +416,7 @@ Não consegui vencer a melhor IA em nenhuma das partidas. Quase sempre eu perdia
 por não ver alguma diagonal ameaçada. Uma outra observação interessante é que a IA sempre 
 começa com a mesma jogada, exibida na Figura \ref{fig:jogada-inicial-ia}.
 Se eu não bloquear a primeira linha, ela sempre irá colocar nas colunas adjacentes 
-e ameaçar colcoar 3 bolas em sequência com os extremos abertos, uma ameaça 
+e ameaçar colocar 3 bolas em sequência com os extremos abertos, uma ameaça 
 dupla que vence o jogo.
 
 \begin{figure}[htb]
