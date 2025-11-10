@@ -110,8 +110,28 @@ Neste trabalho, algoritmos de busca competitiva são implementados em Python par
 competirem em um jogo de Ligue-4. Diferentes algoritmos são implementados e sua performance 
 é comparada experimentalmente com base em diferentes métricas. 
 
+Os algoritmos Minimax, Minimax com poda Alfa-Beta e Iterative Deepening 
+são algoritmos usadas em jogos de dois jogadores para escolher o 
+melhor lance possível. 
+O Minimax simula jogadas futuras alternando turnos de maximizar e 
+minimizar para avaliar estados do jogo e selecionar o que leva ao 
+melhor resultado garantido, usando uma heurísticad e avaliação do estado 
+atual do tabuleiro. 
+
+A poda Alfa-Beta é uma otimização do Minimax que reduz o número de nós 
+analisados ao descartar ramos da árvore de decisão que não podem 
+influenciar o resultado final, mantendo a mesma qualidade da decisão, 
+porém com maior eficiência. 
+
+Já o Iterative Deepening combina a precisão do Minimax 
+com o limite de tempo, realizando buscas sucessivas com profundidades 
+crescentes e aproveitando resultados anteriores para melhorar a
+ordem de exploração dos nós, permitindo encontrar a melhor jogada 
+possível dentro do tempo disponível.
+
 As implementações dos algoritmos nesse trabalho são baseadas nas implementações 
 de \cite{russell2020aima}.
+
 
 \section{Objetivos}
 
@@ -328,22 +348,22 @@ a poda alfa-beta.
 
 \subsection{Iterative Deepening vs Alfa-beta}
 
-Para o tempo limite de 1000 ms, o Iteractive Deepening consegue atingir a profundidade 
-6. Com 2000 ms, atinge a profundidade 7. As vezes estourava o limite e usava o lança 
+Para o tempo limite de 1000 ms, o Iterative Deepening consegue atingir a profundidade 
+6. Com 2000 ms, atinge a profundidade 7. As vezes estourava o limite e usava o lance 
 aleatório de fallback ao tentar atingir a pronfundidade 7 com 2000 ms, 
 de modo que a performance com esse limite foi menor que a com 1000 ms. A Tabela \ref{tab:ids-alphabeta} sumariza os resultados obtidos 
 nesse experimento.
 
 \begin{table}[htbp] 
     \centering 
-    \caption{Resultados finais do experimento Iteractice Deepning vs Alfa-beta.} 
+    \caption{Resultados finais do experimento Iterative Deepning vs Alfa-beta.} 
     \label{tab:ids-alphabeta} 
 
-    \begin{tabular}{c|c|c|c} 
-        Limite (ms) & Vitórias (\%) & Tempo (ms) & Nós \\
+    \begin{tabular}{c|c} 
+        Limite (ms) & Vitórias (\%) \\
 		\hline 
-        1000 & 100 & $1.7 \pm 2.7$ & $31 \pm 7.96$\\
-        2000 & 0 & $6.4 \pm 3.8$ & $125.6 \pm 52.2$\\
+        1000 & 100 \\
+        2000 & 0\\
     \end{tabular}
 \end{table}
 
@@ -352,7 +372,7 @@ nesse experimento.
 \subsection{Humano vs Alfa-beta}
 
 A melhor IA obtida foi o Minimax com poda Alfa-beta e profundidade 5. 
-AO jogar 5 partidas contra ela, obtive os resultados exibidos na 
+Ao jogar 5 partidas contra ela, obtive os resultados exibidos na 
 Tabela \ref{tab:humano-ia}.
 
 \begin{table}[htbp] 
@@ -388,15 +408,16 @@ dupla que vence o jogo.
 A jogada inicial da Figura \ref{fig:jogada-inicial-ia} só ocorre em profundidade maior que 4.
 Para profundidades 2 e 3, ela começa em um dos cantos do tabuleiro.
 
-\section{Discussão}
-
- trade-offs e limitações.
 
 \section{Conclusão}
 
-COMPLETAR DEPOIS
+Tendo em vista os objetivos do trabalho, foi possível comparar experimentalmente 
+a performance de três algoritmos de busca competitiva vistos em sala de aula 
+no jogo de Ligue-4, bem como os efeitos que a função heurística tem na 
+execução do algoritmo Minimax. 
 
-sintse do que funcionou melhor e limitações
+Além disso, foi possível verificar como a poda Alfa-beta consegue reduzir substancialmente 
+o tempo gasto por lance e o número de nós expandidos. 
 
 
 \bibliography{aaai24}
