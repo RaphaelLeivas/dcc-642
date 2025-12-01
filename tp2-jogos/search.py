@@ -317,7 +317,6 @@ def choose_move(board: List[List[int]], player: int, config: Dict) -> Tuple[int,
     # else:
     #     move = minimax_alphabeta(board, player, 5, alpha=-math.inf, beta=math.inf)[1]
     
-    # VERSÃO INICIAL: escolhe aleatoriamente entre as jogadas legais
     # move = random.choice(legal)
     # move = minimax(board, player, max_depth)[1]
     move = minimax_alphabeta(board, player, max_depth, alpha=-math.inf, beta=math.inf)[1]
